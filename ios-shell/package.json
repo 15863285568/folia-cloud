@@ -1,16 +1,17 @@
 {
-  "name": "folia-ios",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Folia 的 iOS 壳：把前端产物打进 App 本体，只有接口走网络",
-  "scripts": {
-    "sync": "cap sync ios"
-  },
-  "dependencies": {
-    "@capacitor/core": "^7.0.0",
-    "@capacitor/ios": "^7.0.0"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "^7.0.0"
-  }
+    "name":  "folia-ios",
+    "version":  "1.0.0",
+    "private":  true,
+    "description":  "Folia 鐨?iOS 澹筹細鎶婂墠绔骇鐗╂墦杩?App 鏈綋锛屽彧鏈夋帴鍙ｈ蛋缃戠粶",
+    "scripts":  {
+                    "sync":  "cap sync ios"
+                },
+    "dependencies":  {
+                         "@capacitor/core":  "^7.0.0",
+                         "@capacitor/ios":  "^7.0.0"
+                     },
+    "devDependencies":  {
+                            "@capacitor/cli":  "^7.0.0",
+                            "typescript":  "^5.9.3"
+                        }
 }

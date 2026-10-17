@@ -1,0 +1,11 @@
+{
+  "appId": "app.folia.web",
+  "appName": "Folia",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "always"
+  },
+  "server": {
+    "iosScheme": "https"
+  }
+}

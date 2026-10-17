@@ -1,0 +1,62 @@
+# Render Blueprint：一次创建两个服务
+#   1) folia-web          —— 网关（静态前端 + 密码门 + /netease 反代 + /api/generate-theme* AI 代理）
+#   2) folia-netease-api  —— 网易云 API，直接部署官方公开仓库，免登录可搜可播
+#
+# 为什么是 Render：Vercel / Cloudflare Pages 在国内不可达（vercel.app 被 DNS 投毒到 Facebook 段、
+# pages.dev 被 TLS 阻断），实测 onrender.com 与 netlify.app 可达。这里选 Render 是因为
+# 它同时提供「静态/Node 服务 + 免费额度 + Blueprint 一键部署」。
+
+services:
+  # ---------- 1) Folia Web ----------
+  - type: web
+    name: folia-web
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install
+    startCommand: node server/gateway.mjs
+    # 网关自带 /healthz（不受密码门影响），Render 用它判断服务是否健康
+    healthCheckPath: /healthz
+    envVars:
+      # 访问密码（和本地一致的默认值，可在 Render 面板改）
+      - key: FOLIA_PASSWORD
+        value: qjzQJZ2012
+      # cookie 签名密钥：用 Render 自动生成的随机值。
+      # 云端文件系统是临时的，靠落盘的话每次重新部署都会把已登录设备全踢下线。
+      - key: FOLIA_AUTH_SECRET
+        generateValue: true
+      # AI 主题走 OpenAI 兼容接口（DeepSeek，国内直连不需要代理）
+      - key: FOLIA_AI_PROVIDER
+        value: openai
+      - key: OPENAI_API_URL
+        value: https://api.deepseek.com/v1
+      - key: OPENAI_API_MODEL
+        value: deepseek-chat
+      - key: OPENAI_API_TEMPERATURE
+        value: "0.7"
+      # 密钥需要你手动填（sync: false 表示不在仓库里存明文）
+      - key: OPENAI_API_KEY
+        sync: false
+      # 网易云 API 的目标地址，取自下面那个服务自动分配的公网地址
+      - key: FOLIA_NETEASE_TARGET
+        fromService:
+          type: web
+          name: folia-netease-api
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # ---------- 2) 网易云 API ----------
+  - type: web
+    name: folia-netease-api
+    runtime: node
+    plan: free
+    region: singapore
+    # 直接部署官方公开仓库，不需要你 fork
+    repo: https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      # 不启用「通用解锁」，保持默认行为
+      - key: ENABLE_GENERAL_UNBLOCK
+        value: "false"

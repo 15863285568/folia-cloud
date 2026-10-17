@@ -1,0 +1,1 @@
+import{yi as e}from"./noLyricLines-C0_17C-A.js";import{X as t}from"./bootstrap-BgOZEJ6T.js";var n=e();function r(e){return(0,n.jsx)(`div`,{className:`flex h-full justify-center overflow-y-auto px-4 py-8`,children:(0,n.jsx)(`div`,{className:`w-full max-w-lg self-start`,children:(0,n.jsx)(t,{...e})})})}export{r as default};

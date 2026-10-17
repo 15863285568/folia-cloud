@@ -1,0 +1,16 @@
+{
+  "name": "folia-cloud",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Folia Web 云端部署包：网关门禁 + 静态前端 + AI 主题代理",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/gateway.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^2.24.0"
+  }
+}

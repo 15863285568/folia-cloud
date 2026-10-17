@@ -1,0 +1,1 @@
+import{qs as e}from"../lucide-icons-DYivh95X.js";var t={name:`dot`,size:24,node:[[`circle`,{cx:`12`,cy:`12`,r:`1`,key:`41hilf`}]]};t.node;var n=e(t);export{t as __iconData,n as default};

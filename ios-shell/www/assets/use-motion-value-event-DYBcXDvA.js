@@ -1,0 +1,1 @@
+import{i as e}from"./preload-helper-vuKwV25Y.js";import{Js as t}from"./lucide-icons-DYivh95X.js";var n=e(t(),1);function r(e,t,r){(0,n.useInsertionEffect)(()=>e.on(t,r),[e,t,r])}export{r as t};

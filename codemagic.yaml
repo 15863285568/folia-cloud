@@ -1,0 +1,35 @@
+# Codemagic 构建配置（必须在仓库根目录）
+# iOS 工程在 ios-shell/ 子目录里，所有命令先 cd 进去。
+workflows:
+  ios-unsigned:
+    name: Folia iOS (未签名 IPA)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      node: 20
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: 进入子目录并安装依赖
+        script: |
+          cd ios-shell
+          if [ ! -d "www" ]; then echo "缺少 ios-shell/www"; exit 1; fi
+          npm install
+      - name: 生成并同步 iOS 工程
+        script: |
+          cd ios-shell
+          npx cap add ios || true
+          npx cap sync ios
+      - name: 构建未签名 IPA
+        script: |
+          cd ios-shell/ios/App
+          xcodebuild -workspace App.xcworkspace -scheme App \
+            -configuration Release -sdk iphoneos \
+            -archivePath build/App.xcarchive archive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          mkdir -p build/Payload
+          cp -r build/App.xcarchive/Products/Applications/App.app build/Payload/
+          cd build && zip -r folia-unsigned.ipa Payload
+    artifacts:
+      - ios-shell/ios/App/build/folia-unsigned.ipa
+      - /tmp/xcodebuild_logs/*.log

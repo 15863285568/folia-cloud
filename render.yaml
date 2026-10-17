@@ -1,10 +1,11 @@
-# Render Blueprint：一次创建两个服务
-#   1) folia-web          —— 网关（静态前端 + 密码门 + /netease 反代 + /api/generate-theme* AI 代理）
-#   2) folia-netease-api  —— 网易云 API，直接部署官方公开仓库，免登录可搜可播
+# Render Blueprint：一次创建两个服务，都来自本仓库
+#   1) folia-web          —— 网关（静态前端 + 密码门 + /netease 反代 + AI 主题代理）
+#   2) folia-netease-api  —— 网易云 API（官方 npm 包，由 server/netease.mjs 启动）
+#
+# 两个服务共用同一个仓库与同一份依赖，不依赖 Blueprint 的跨仓库 `repo:` 字段，部署更稳。
 #
 # 为什么是 Render：Vercel / Cloudflare Pages 在国内不可达（vercel.app 被 DNS 投毒到 Facebook 段、
-# pages.dev 被 TLS 阻断），实测 onrender.com 与 netlify.app 可达。这里选 Render 是因为
-# 它同时提供「静态/Node 服务 + 免费额度 + Blueprint 一键部署」。
+# pages.dev 被 TLS 阻断），实测 onrender.com 与 netlify.app 可达。
 
 services:
   # ---------- 1) Folia Web ----------
@@ -15,17 +16,17 @@ services:
     region: singapore
     buildCommand: npm install
     startCommand: node server/gateway.mjs
-    # 网关自带 /healthz（不受密码门影响），Render 用它判断服务是否健康
+    # 网关自带 /healthz（不受密码门影响）
     healthCheckPath: /healthz
     envVars:
-      # 访问密码（和本地一致的默认值，可在 Render 面板改）
+      # 访问密码（可在 Render 面板修改）
       - key: FOLIA_PASSWORD
         value: qjzQJZ2012
       # cookie 签名密钥：用 Render 自动生成的随机值。
       # 云端文件系统是临时的，靠落盘的话每次重新部署都会把已登录设备全踢下线。
       - key: FOLIA_AUTH_SECRET
         generateValue: true
-      # AI 主题走 OpenAI 兼容接口（DeepSeek，国内直连不需要代理）
+      # AI 主题走 OpenAI 兼容接口（DeepSeek，国内直连无需代理）
       - key: FOLIA_AI_PROVIDER
         value: openai
       - key: OPENAI_API_URL
@@ -34,10 +35,10 @@ services:
         value: deepseek-chat
       - key: OPENAI_API_TEMPERATURE
         value: "0.7"
-      # 密钥需要你手动填（sync: false 表示不在仓库里存明文）
+      # 需要你手动填（sync: false = 不把明文存进仓库）
       - key: OPENAI_API_KEY
         sync: false
-      # 网易云 API 的目标地址，取自下面那个服务自动分配的公网地址
+      # 网易云 API 地址，取自下面那个服务的公网地址
       - key: FOLIA_NETEASE_TARGET
         fromService:
           type: web
@@ -50,10 +51,9 @@ services:
     runtime: node
     plan: free
     region: singapore
-    # 直接部署官方公开仓库，不需要你 fork
-    repo: https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced
     buildCommand: npm install
-    startCommand: node app.js
+    startCommand: node server/netease.mjs
+    healthCheckPath: /
     envVars:
       - key: HOST
         value: 0.0.0.0

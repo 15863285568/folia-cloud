@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Folia Web 云端部署包：网关门禁 + 静态前端 + AI 主题代理",
+  "description": "Folia Web 云端部署包：网关门禁 + 静态前端 + AI 主题代理 + 网易云 API",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "start": "node server/gateway.mjs"
+    "start": "node server/gateway.mjs",
+    "start:netease": "node server/netease.mjs"
   },
   "dependencies": {
-    "@google/genai": "^2.24.0"
+    "@google/genai": "^2.24.0",
+    "@neteasecloudmusicapienhanced/api": "^4.41.1"
   }
 }

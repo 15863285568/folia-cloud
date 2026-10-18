@@ -1,1 +1,0 @@
-import{gr as e,ur as t}from"./bootstrap-EZXei99w.js";export{t as getNavidromeConfig,e as navidromeApi};
